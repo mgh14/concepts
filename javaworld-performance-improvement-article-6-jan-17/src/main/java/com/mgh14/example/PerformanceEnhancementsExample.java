@@ -1,5 +1,7 @@
 package com.mgh14.example;
 
+import java.util.Date;
+
 /**
  * Program for testing a number of performance enhancement examples given in
  * a JavaWorld article here:
@@ -9,15 +11,18 @@ package com.mgh14.example;
 public class PerformanceEnhancementsExample {
 
     private static final int NUM_INTEGERS_TO_CREATE = 1000000;
+    private static final int NUM_DATE_OBJECTS_TO_CREATE = 100000000;
 
     public static void main(String... args) {
-        System.out.println("Beginning performance enhancement tests...");
+        System.out.println("\nBeginning performance enhancement tests...");
 
         runIntegerObjectArrayCreationTest();
-
         runPrimitiveIntegerArrayCreationTest();
 
-        System.out.println("Performance enhancement tests finished.");
+        runDateCreationNewObjectEachTest();
+        runDateCreationOneObjectTest();
+
+        System.out.println("\nPerformance enhancement tests finished.");
     }
 
     private static void runIntegerObjectArrayCreationTest() {
@@ -41,6 +46,33 @@ public class PerformanceEnhancementsExample {
         int[] arrayOfIntegerPrimitives = new int[NUM_INTEGERS_TO_CREATE];
         for (int i = 0; i < NUM_INTEGERS_TO_CREATE; i++) {
             arrayOfIntegerPrimitives[i] = i;
+        }
+
+        printTestResults(testName, startTime);
+    }
+
+    private static void runDateCreationNewObjectEachTest() {
+        String testName = "Displaying new date object for each of " + NUM_DATE_OBJECTS_TO_CREATE +
+                " iterations";
+        long startTime = startTestWithStartTime(testName);
+
+        for (int i = 0; i < NUM_DATE_OBJECTS_TO_CREATE; i++) {
+            Date newDate = new Date(System.nanoTime());
+            newDate.getTime();
+        }
+
+        printTestResults(testName, startTime);
+    }
+
+    private static void runDateCreationOneObjectTest() {
+        String testName = "Displaying one re-used date object for each of " + NUM_DATE_OBJECTS_TO_CREATE +
+                " iterations";
+        long startTime = startTestWithStartTime(testName);
+
+        Date dateObj = new Date();
+        for (int i = 0; i < NUM_DATE_OBJECTS_TO_CREATE; i++) {
+            dateObj.setTime(System.nanoTime());
+            dateObj.getTime();
         }
 
         printTestResults(testName, startTime);
