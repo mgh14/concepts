@@ -1,20 +1,33 @@
 package com.mgh14.example;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Program for testing a number of performance enhancement examples given in
  * a JavaWorld article here:
  *
  * http://www.javaworld.com/article/2078623/core-java/jvm-performance-optimization-part-1-a-jvm-technology-primer.html
+ *
+ * Note: Execute this program with the following JVM opts to analyze JVM behavior
+ * (the quotation characters are NOT part of the string):
+ *
+ *      "-XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps
+ *      -Xloggc:gcOut.txt -XX:+PrintCompilation"
  */
 public class PerformanceEnhancementsExample {
 
     private static final int NUM_INTEGERS_TO_CREATE = 1000000;
     private static final int NUM_DATE_OBJECTS_TO_CREATE = 100000000;
 
+    // We'll use a data structure to store the print statements so that
+    // the expensive print statements don't interfere with the time
+    // measurements.
+    private static final List<String> printStatements = new ArrayList<>(100);
+
     public static void main(String... args) {
-        System.out.println("\nBeginning performance enhancement tests...");
+        printStatements.add("\nBeginning performance enhancement tests...");
 
         runIntegerObjectArrayCreationTest();
         runPrimitiveIntegerArrayCreationTest();
@@ -22,7 +35,11 @@ public class PerformanceEnhancementsExample {
         runDateCreationNewObjectEachTest();
         runDateCreationOneObjectTest();
 
-        System.out.println("\nPerformance enhancement tests finished.");
+        printStatements.add("\nPerformance enhancement tests finished.");
+
+        for (String statement : printStatements) {
+            System.out.println(statement);
+        }
     }
 
     private static void runIntegerObjectArrayCreationTest() {
@@ -79,19 +96,20 @@ public class PerformanceEnhancementsExample {
     }
 
     private static long startTestWithStartTime(String testName) {
-        System.out.println("\nTest: " + testName);
+        printStatements.add("\n================");
+        printStatements.add("\nNew Test: " + testName);
 
         long startTime = System.nanoTime();
-        System.out.println("Start time: " + startTime + "\n");
+        printStatements.add("Start time: " + startTime + "\n");
 
         return startTime;
     }
 
     private static void printTestResults(String testName, long startTime) {
         long timeTaken = System.nanoTime() - startTime;
-        System.out.println("Time taken for test [" + testName + "]: " + timeTaken +
+        printStatements.add("Time taken for test [" + testName + "]: " + timeTaken +
                 " nanoseconds");
-        System.out.println("Time in seconds: " + getSecondsFromNanoSeconds(timeTaken) +
+        printStatements.add("Time in seconds: " + getSecondsFromNanoSeconds(timeTaken) +
                 " seconds");
     }
 
